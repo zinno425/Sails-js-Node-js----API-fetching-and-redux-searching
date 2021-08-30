@@ -1,0 +1,15 @@
+<script>
+  $(document).ready(function () {
+    $(document).on("click", ".details", function (e) {
+        var $this = $(this);
+        var id = $this.attr('data');
+        $.ajax({
+                    type: 'POST',
+                    url: '/details',
+                    data: {
+                        id : id,
+                    },
+                })
+    })
+  });
+</script>

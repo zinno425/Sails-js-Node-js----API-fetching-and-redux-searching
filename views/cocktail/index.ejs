@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cocktail</title>
+    <style>
+        .body { background-color: darkred;}
+        
+        .searcharea,h1 {
+            text-align: center;
+            padding:25px;
+        }
+        .line{
+            border: 100px;
+            border-color: black;
+            width: 100%;
+            height: 10px;
+        }
+        .image{height: 100px;}
+        .product{
+            float: left;
+            width: 200px;
+            border: 10px;
+        border-color: black;}
+        .list{ 
+            float: left;
+        }
+       
+
+    </style>
+</head>
+
+<body class='body'>
+    <div class="container">
+        <h1>the cocktail bar</h1>
+        <div class="row">
+            <div class="searcharea">
+                <form action="/search" method="post">
+
+                <input type="text" name="search" id="search">
+             
+
+
+                </form>
+            </div>
+            <div class="line">
+             <hr>  
+            </div>
+
+            <div class="row list" style="float:left">
+                <% if (data.length > 0) { %>
+                    <div class="col-sm-4 product" style="float:left">
+                        <% for (let product of data) { %>
+                            <article class="card product-item">
+                                <header class="card__header">
+                                    <h3 class="product__title">
+                                        <%= product.strDrink %>
+                                    </h1>
+                                </header>
+                                <div class="card__image">
+                                    <a href="/detail/<%= product.idDrink %>" class="btn"> <img class="image"src="<%= product.strDrinkThumb %>" alt="<%= product.strDrink %>"></a>
+                                   
+                                </div>
+                              
+                               
+                            </article>
+                            <% } %>
+                    </div>
+                    
+                        <% } %>
+
+
+            </div>
+         
+
+        </div>
+
+    </div>
+    <div class="result" id="result"></div>
+
+
+
+</body>
+</html>
+
+<script>
+
+    $(document).ready(function () {
+
+    
+     
+
+$('#search').keyup(function(e){
+
+var arr;
+
+    $('.list').css('display', 'none')
+    $.ajax({
+                      type: 'get',
+                      async: false,
+                      url: 'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a',
+                      data: {
+                         
+                      },
+                  
+                  }).done(function (data) {
+                      
+
+                      arr = data.drinks;
+                   
+                });
+
+                    var searchField = $(this).val();
+                    
+			if(searchField === '')  {
+				$('#result').html('');
+               
+                
+				return;
+			}
+         
+            var regex = new RegExp(searchField, "i");
+    
+            var output = '<div class="row">';
+            var count = 1;
+			  $.each(arr, function(key, val){
+               
+                
+                
+				if ((val.strDrink.search(regex) != -1) || (val.strCategory.search(regex) != -1)) {
+				  output += '<div class="col-md-2 well">';
+				  output += '<div class="col-md-3"><img class="img-responsive image" src="'+val.strDrinkThumb+'" alt="'+ val.strDrink +'" /></div>';
+				  output += '<div class="col-md-7">';
+				  output += '<h5>' + val.strDrink+ '</h5>';
+				  output += '<p>' + val.strCategory + '</p>'
+				  output += '</div>';
+				  output += '  <button data="'+val.idDrink+'" class="btn btn-info details">Details</button>';
+				  output += '</div>';
+				  output += '</div>';
+				  
+				 
+				  if(count%2 == 0){
+					output += '</div><div class="row">'
+				  }
+				  count++;
+				}
+			  });
+			  output += '</div>';
+              
+			  $('#result').html(output);
+              
+
+
+            });
+           
+     
+
+    });
+  </script>
